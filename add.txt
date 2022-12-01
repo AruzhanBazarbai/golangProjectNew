@@ -1,0 +1,24 @@
+customer
+{
+    "id":8,
+    "name":"BBBBBBBBBB",
+    "surname":"CCCCC",
+    "age":17,
+    "sex":"Female",
+    "card_number":"11111111111"
+}
+
+UPDATE `Customer` SET `name`='AAAA',`surname`='BBBB',`age`=15,`sex`='Male',`card_number`='2222' WHERE `id`=5;
+
+article
+{
+    "name":"AAAAAAAAA",
+    "anons":"BBBBBBBBBBB",
+    "full_text":"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+    "image":"http"
+}
+user
+{
+    "name": "Example",
+    "password": "123456789"
+}
