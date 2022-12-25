@@ -1,21 +1,20 @@
 package ticket
 
 import (
-	"database/sql"
-	// "fmt"
 	"net/http"
+	"database/sql"
 
 	"github.com/gin-gonic/gin"
 
 	"go/basic/g/modules"
 )
 
-func GetTickets(db *sql.DB) gin.HandlerFunc{
+func GetTicketsByPriceDesc(db *sql.DB) gin.HandlerFunc{
 	return func(c *gin.Context){
 		var rows *sql.Rows
 		var e error
 
-		if rows, e = db.Query("SELECT * FROM `tickets`"); e != nil {
+		if rows, e = db.Query("SELECT * FROM `tickets` ORDER BY `price` desc"); e != nil {
 			c.JSON(http.StatusInternalServerError,e)
 			return
 		}
@@ -38,9 +37,6 @@ func GetTickets(db *sql.DB) gin.HandlerFunc{
 			c.JSON(http.StatusNotFound, sql.ErrNoRows)
 			return
 		}
-		// for i := 0; i < len(tickets); i++ {
-		// 	fmt.Println(tickets[i].DepartureDate)
-		// }
 		c.JSON(http.StatusOK, tickets)
 
 	}

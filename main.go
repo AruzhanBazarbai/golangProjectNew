@@ -56,6 +56,8 @@ func main(){
 	router.DELETE("/tickets/:id",authMiddleware,ticket.DeleteTicket(db))
 	router.POST("/tickets",authMiddleware,ticket.PostTicket(db))
 	router.PUT("/tickets/:id",authMiddleware,ticket.PutTicket(db))
+	router.GET("/ticketsByPriceAsc",authMiddleware,ticket.GetTicketsByPriceAsc(db))
+	router.GET("/ticketsByPriceDesc",authMiddleware,ticket.GetTicketsByPriceDesc(db))
 	// myticket endpoints
 	router.GET("/myTickets",authMiddleware,myTickets.GetMyTickets(db))
 	router.GET("/myTickets/:id",authMiddleware,myTickets.GetMyTickets(db))
