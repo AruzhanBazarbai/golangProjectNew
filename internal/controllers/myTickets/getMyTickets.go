@@ -7,14 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"go/basic/g/modules"
+	"go/basic/g/internal/controllers"
+	"fmt"
 )
 
 func GetMyTickets(db *sql.DB) gin.HandlerFunc{
 	return func(c *gin.Context){
 		var rows *sql.Rows
 		var e error
-
-		if rows, e = db.Query("SELECT * FROM `myTickets`"); e != nil {
+		id:= controllers.UserId
+		fmt.Println(id)
+		if rows, e = db.Query( fmt.Sprintf("SELECT * FROM `myTickets` WHERE `customerId`=%d",id)); e != nil {
 			c.JSON(http.StatusInternalServerError,e)
 			return
 		}

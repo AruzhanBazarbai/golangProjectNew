@@ -82,7 +82,6 @@ func main(){
 		myTicket:=api.Group("/myTickets",controllers.UserIdentity)
 		{
 			myTicket.GET("/",myTickets.GetMyTickets(db))
-			myTicket.GET("/:id",myTickets.GetMyTickets(db))
 			myTicket.POST("/",myTickets.PostMyTicket(db))
 		}
 		

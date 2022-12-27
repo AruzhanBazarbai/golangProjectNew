@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go/basic/g/internal/controllers"
 )
 
 func PostMyTicket(db *sql.DB) gin.HandlerFunc{
@@ -19,7 +20,6 @@ func PostMyTicket(db *sql.DB) gin.HandlerFunc{
 			return
 		}
 
-		// var row = db.QueryRowContext(ctx, "SELECT MAX(Id) FROM `tickets`")  
 		var row = db.QueryRowContext(ctx, "SELECT MAX(Id) FROM `myTickets`")  
 
 		if e := row.Scan(&myTickets.Id); e != nil{
@@ -29,14 +29,14 @@ func PostMyTicket(db *sql.DB) gin.HandlerFunc{
 			}
 			c.JSON(http.StatusInternalServerError, row.Scan(&myTickets.Id))
 		}
-		c.JSON(http.StatusOK, myTickets)
- 
-		if _, e := db.ExecContext(ctx, fmt.Sprintf("INSERT INTO `myTickets` VALUES(%d, %d, %d);", myTickets.Id + 1, myTickets.UserId, myTickets.TicketId)); e != nil {
+		
+		myTickets.UserId=controllers.UserId
+		if _, e := db.ExecContext(ctx, fmt.Sprintf("INSERT INTO `myTickets` VALUES(%d, %d, %d);", myTickets.Id + 1,  myTickets.TicketId, myTickets.UserId)); e != nil {
 			c.JSON(http.StatusInternalServerError,"internal error")
 			return
 		}
 
-
+		c.JSON(http.StatusOK, myTickets)
 		c.Writer.Header().Add("Location",fmt.Sprintf("/myTickets/%d",myTickets.Id+1))
 		c.JSON(http.StatusCreated,"succesfully created")
 	}

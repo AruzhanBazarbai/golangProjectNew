@@ -28,7 +28,7 @@ const(
 	authorizationHeader= "Authorization"
 	userCtx="userId"
 )
-
+var UserId=0;
 type tokenClaims struct{
 	jwt.StandardClaims
 	UserId int `json:"user_id"`
@@ -132,6 +132,7 @@ func UserIdentity(c *gin.Context){
 	c.Set(userCtx,claims.UserId) // в контекст пишем юзер айди на переменную userCtx="userId"
 	c.Set("token",accessToken)
 	id,_:= c.Get(userCtx)
+	UserId=claims.UserId
 	// fmt.Println(id)
 	
 
