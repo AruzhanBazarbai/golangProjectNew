@@ -27,9 +27,9 @@ func PostUser(db *sql.DB) gin.HandlerFunc{
 				c.JSON(http.StatusNotFound,"ERROR")
 				return
 			}
-			c.JSON(http.StatusInternalServerError,"ERRORRR")
+			c.JSON(http.StatusInternalServerError,"ERRORRR") 
 		}
-		c.JSON(http.StatusOK, user)
+		// c.JSON(http.StatusOK, user)
  
 		if _, e := db.ExecContext(ctx, fmt.Sprintf("INSERT INTO `User` VALUES(%d,'%s','%s');",user.Id+1,user.Name,user.Password)); e != nil {
 			c.JSON(http.StatusInternalServerError,"internal error")
@@ -39,6 +39,8 @@ func PostUser(db *sql.DB) gin.HandlerFunc{
 			
 
 		c.Writer.Header().Add("Location",fmt.Sprintf("/users/%d",user.Id+1))
-		c.JSON(http.StatusCreated,"succesfully created")
+		c.JSON(http.StatusCreated,map[string]interface{}{
+			"id":user.Id+1,
+		})
 	}	
 }

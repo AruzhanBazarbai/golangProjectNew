@@ -1,0 +1,2 @@
+var jsonData = JSON.parse(responseBody);
+postman.setEnvironmentVariable("token", jsonData.token_payload);

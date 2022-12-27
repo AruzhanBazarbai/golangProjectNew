@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"strconv"
+	// "strconv"
 
 	"go/basic/g/modules"
 
@@ -13,7 +13,9 @@ import (
 
 func GetMyTicket(db *sql.DB) gin.HandlerFunc{
 	return func(c *gin.Context){
-		var id, _ = strconv.Atoi(c.Param("id"))
+		id:= c.GetHeader("userId")
+		fmt.Println(id)
+		// var id, _ = strconv.Atoi(c.Param("id"))
 		var ctx = c.Request.Context()
 		var row = db.QueryRowContext(ctx, fmt.Sprintf("SELECT * FROM `myTickets` WHERE `Id`=%d",id))
 		var myTickets modules.MyTickets

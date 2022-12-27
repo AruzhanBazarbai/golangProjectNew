@@ -1,19 +1,21 @@
 package main
 
 import (
-	"go/basic/g/internal/controllers/customer"
+	"go/basic/g/internal/controllers"
 	"go/basic/g/internal/controllers/article"
-	"go/basic/g/internal/controllers/user"
-	"go/basic/g/internal/controllers/ticket"
+	"go/basic/g/internal/controllers/customer"
 	"go/basic/g/internal/controllers/myTickets"
+	"go/basic/g/internal/controllers/ticket"
+	"go/basic/g/internal/controllers/user"
+
 	"log"
 	// "fmt"
 
 	"github.com/gin-gonic/gin"
 
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 
+	_ "github.com/go-sql-driver/mysql"
 	// "go/basic/g/modules"
 )
 
@@ -27,42 +29,63 @@ func main(){
 		panic(err)
 	}
 	defer db.Close()
-	var accounts = map[string]string{
-		"john":"doe",
-		"foo":"bar",
+
+	auth:=router.Group("/auth")
+	{
+		// authorization endpoints
+		auth.POST("/sign-up",controllers.SignUp(db))
+		auth.POST("/sign-in",controllers.SignIn(db))
 	}
-	var authMiddleware = gin.BasicAuth(accounts)
-	// customer endpoints
-	router.GET("/customers",authMiddleware,customer.GetCustomers(db))
-	router.GET("/customers/:id",authMiddleware,customer.GetCustomer(db))
-	router.DELETE("/customers/:id",authMiddleware,customer.DeleteCustomer(db))
-	router.POST("/customers",authMiddleware,customer.PostCustomer(db))
-	router.PUT("/customers/:id",authMiddleware,customer.PutCustomer(db))
-	// article endpoints
-	router.GET("/articles",authMiddleware,article.GetArticles(db))
-	router.GET("/articles/:id",authMiddleware,article.GetArticle(db))
-	router.DELETE("/articles/:id",authMiddleware,article.DeleteArticle(db))
-	router.POST("/articles",authMiddleware,article.PostArticle(db))
-	router.PUT("/articles/:id",authMiddleware,article.PutArticle(db))
-	// user endpoints
-	router.GET("/users",authMiddleware,user.GetUsers(db))
-	router.GET("/users/:id",authMiddleware,user.GetUser(db))
-	router.DELETE("/users/:id",authMiddleware,user.DeleteUser(db))
-	router.POST("/users",authMiddleware,user.PostUser(db))
-	router.PUT("/users/:id",authMiddleware,user.PutUser(db))
-	// ticket endpoints
-	router.GET("/tickets",authMiddleware,ticket.GetTickets(db))
-	router.GET("/tickets/:id",authMiddleware,ticket.GetTicket(db))
-	router.DELETE("/tickets/:id",authMiddleware,ticket.DeleteTicket(db))
-	router.POST("/tickets",authMiddleware,ticket.PostTicket(db))
-	router.PUT("/tickets/:id",authMiddleware,ticket.PutTicket(db))
-	// myticket endpoints
-	router.GET("/myTickets",authMiddleware,myTickets.GetMyTickets(db))
-	router.GET("/myTickets/:id",authMiddleware,myTickets.GetMyTickets(db))
-	// router.DELETE("/myTickets/:id",myTickets.DeleteMyTicket(db))
-	router.POST("/myTickets",authMiddleware,myTickets.PostMyTicket(db))
-	// router.PUT("/myTickets/:id",myTickets.PutMyTicket(db))
-
+	
+	api:=router.Group("/")
+	{
+		// customer endpoints
+		customers:=api.Group("/customers",controllers.UserIdentity)
+		{
+			customers.GET("/",customer.GetCustomers(db))
+			customers.GET("/:id",customer.GetCustomer(db))
+			customers.DELETE("/:id",customer.DeleteCustomer(db))
+			customers.POST("/",customer.PostCustomer(db))
+			customers.PUT("/:id",customer.PutCustomer(db))
+		}
+		// article endpoints
+		articles:=api.Group("/articles",controllers.UserIdentity)
+		{
+			articles.GET("/",article.GetArticles(db))
+			articles.GET("/:id",article.GetArticle(db))
+			articles.DELETE("/:id",article.DeleteArticle(db))
+			articles.POST("/",article.PostArticle(db))
+			articles.PUT("/:id",article.PutArticle(db))
+		}
+		// user endpoints
+		users:=api.Group("/users",controllers.UserIdentity)
+		{
+			users.GET("/",user.GetUsers(db))
+			users.GET("/:id",user.GetUser(db))
+			users.DELETE("/:id",user.DeleteUser(db))
+			users.POST("/",user.PostUser(db))
+			users.PUT("/:id",user.PutUser(db))
+		}
+		// ticket endpoints
+		tickets:=api.Group("/tickets",controllers.UserIdentity)
+		{
+			tickets.GET("/",ticket.GetTickets(db))
+			tickets.GET("/:id",ticket.GetTicket(db))
+			tickets.DELETE("/:id",ticket.DeleteTicket(db))
+			tickets.POST("/",ticket.PostTicket(db))
+			tickets.PUT("/:id",ticket.PutTicket(db))
+			tickets.POST("/get",ticket.GetLfTickets(db))
+			tickets.GET("/asc",ticket.GetTicketsByPriceAsc(db))
+			tickets.GET("/desc",ticket.GetTicketsByPriceDesc(db))
+		}
+		// myticket endpoints
+		myTicket:=api.Group("/myTickets",controllers.UserIdentity)
+		{
+			myTicket.GET("/",myTickets.GetMyTickets(db))
+			myTicket.GET("/:id",myTickets.GetMyTickets(db))
+			myTicket.POST("/",myTickets.PostMyTicket(db))
+		}
+		
+	}
 	log.Fatalln(router.Run(address))
-
 }

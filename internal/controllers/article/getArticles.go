@@ -29,7 +29,6 @@ func GetArticles(db *sql.DB) gin.HandlerFunc{
 				c.JSON(http.StatusInternalServerError, e)
 				return
 			}
-
 			articles = append(articles, article)
 		}
 
